@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../models/User';
 
-export const ping = (req: Request, res: Response) => {
-    res.json({pong: true});
-}
 
 export const register = async (req: Request, res: Response) => {
     if(req.body.email && req.body.password) {
@@ -24,21 +21,25 @@ export const register = async (req: Request, res: Response) => {
 }
 
 export const login = async (req: Request, res: Response) => {
-    if(req.body.email && req.body.password) {
-        let email: string = req.body.email;
-        let password: string = req.body.password;
-
-        let user = await User.findOne({ 
-            where: { email, password }
-        });
-
-        if(user) {
-            res.json({ status: true });
-            return;
+    try {
+        if(req.body.email && req.body.password) {
+            let email: string = req.body.email;
+            let password: string = req.body.password;
+    
+            let user = await User.findOne({ 
+                where: { email, password }
+            });
+    
+            if(user) {
+                res.json({ status: true });
+                return;
+            } else {
+                res.json({ status: false });
+            }
         }
+    } catch (error) {
+        res.json({ error })
     }
-
-    res.json({ status: false });
 }
 
 export const list = async (req: Request, res: Response) => {
